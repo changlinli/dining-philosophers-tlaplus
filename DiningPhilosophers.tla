@@ -20,7 +20,7 @@ Philosophers == 1..NumOfPhilosophers
 
 Forks == 1..NumOfPhilosophers
 
-NextFork(fork) == ((fork + 1) % NumOfPhilosophers) + 1
+NextFork(fork) == IF fork < NumOfPhilosophers THEN fork + 1 ELSE (fork + 1) % NumOfPhilosophers
 
 PhilosophersHoldingFork(fork) == { p \in Philosophers : fork \in philosopherToForks[p] }
 
@@ -97,5 +97,7 @@ Next == \E p \in Philosophers :
 Spec == Init /\ [][Next]_vars
 
 SpecWithFairness == Spec /\ WF_vars(Next)
+
+EventuallyAllPhilosophersEat == \A p \in Philosophers : <> (philosopherStates[p] = "eating")
 
 =============================================================================

@@ -17,13 +17,18 @@
 <booleanAttribute key="mcMode" value="true"/>
 <stringAttribute key="modelBehaviorInit" value=""/>
 <stringAttribute key="modelBehaviorNext" value=""/>
-<stringAttribute key="modelBehaviorSpec" value="Spec"/>
+<stringAttribute key="modelBehaviorSpec" value="SpecWithFairness"/>
 <intAttribute key="modelBehaviorSpecType" value="1"/>
 <stringAttribute key="modelBehaviorVars" value="philosopherStates, arbitrator, philosopherToForks"/>
 <stringAttribute key="modelComments" value=""/>
 <booleanAttribute key="modelCorrectnessCheckDeadlock" value="true"/>
-<listAttribute key="modelCorrectnessInvariants"/>
-<listAttribute key="modelCorrectnessProperties"/>
+<listAttribute key="modelCorrectnessInvariants">
+<listEntry value="1DiningPhilosophers!TypeOK"/>
+</listAttribute>
+<listAttribute key="modelCorrectnessProperties">
+<listEntry value="1DiningPhilosophers!Spec"/>
+<listEntry value="1DiningPhilosophers!EventuallyAllPhilosophersEat"/>
+</listAttribute>
 <stringAttribute key="modelExpressionEval" value=""/>
 <stringAttribute key="modelParameterActionConstraint" value=""/>
 <listAttribute key="modelParameterConstants">

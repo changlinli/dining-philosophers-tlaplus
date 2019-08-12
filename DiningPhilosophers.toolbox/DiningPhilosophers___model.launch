@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.lamport.tla.toolbox.tool.tlc.modelCheck">
+<stringAttribute key="TLCCmdLineParameters" value=""/>
+<stringAttribute key="configurationName" value="model"/>
+<booleanAttribute key="deferLiveness" value="false"/>
+<intAttribute key="dfidDepth" value="100"/>
+<booleanAttribute key="dfidMode" value="false"/>
+<intAttribute key="distributedFPSetCount" value="0"/>
+<stringAttribute key="distributedNetworkInterface" value="10.0.13.211"/>
+<intAttribute key="distributedNodesCount" value="1"/>
+<stringAttribute key="distributedTLC" value="off"/>
+<stringAttribute key="distributedTLCVMArgs" value=""/>
+<intAttribute key="fpBits" value="1"/>
+<intAttribute key="fpIndex" value="1"/>
+<intAttribute key="maxHeapSize" value="25"/>
+<intAttribute key="maxSetSize" value="1000000"/>
+<booleanAttribute key="mcMode" value="true"/>
+<stringAttribute key="modelBehaviorInit" value=""/>
+<stringAttribute key="modelBehaviorNext" value=""/>
+<stringAttribute key="modelBehaviorSpec" value="Spec"/>
+<intAttribute key="modelBehaviorSpecType" value="1"/>
+<stringAttribute key="modelBehaviorVars" value="philosopherStates, philosopherToForks"/>
+<stringAttribute key="modelComments" value=""/>
+<booleanAttribute key="modelCorrectnessCheckDeadlock" value="true"/>
+<listAttribute key="modelCorrectnessInvariants">
+<listEntry value="1TypeOK"/>
+</listAttribute>
+<listAttribute key="modelCorrectnessProperties"/>
+<stringAttribute key="modelExpressionEval" value=""/>
+<stringAttribute key="modelParameterActionConstraint" value=""/>
+<listAttribute key="modelParameterConstants">
+<listEntry value="NumOfPhilosophers;;5;0;0"/>
+</listAttribute>
+<stringAttribute key="modelParameterContraint" value=""/>
+<listAttribute key="modelParameterDefinitions"/>
+<stringAttribute key="modelParameterModelValues" value="{}"/>
+<stringAttribute key="modelParameterNewDefinitions" value=""/>
+<intAttribute key="numberOfWorkers" value="4"/>
+<booleanAttribute key="recover" value="false"/>
+<stringAttribute key="result.mail.address" value=""/>
+<intAttribute key="simuAril" value="-1"/>
+<intAttribute key="simuDepth" value="100"/>
+<intAttribute key="simuSeed" value="-1"/>
+<stringAttribute key="specName" value="DiningPhilosophers"/>
+<listAttribute key="traceExploreExpressions">
+<listEntry value="1ForkIsAvailable(2)"/>
+<listEntry value="1PhilosophersHoldingFork(2)"/>
+<listEntry value="1philosopherStates \in [Philosophers -&gt; {&quot;thinking&quot;, &quot;waitingForFirstFork&quot;, &quot;waitingForSecondFork&quot;, &quot;eating&quot;, &quot;setDownFirstFork&quot;}]"/>
+<listEntry value="1\A p \in Philosophers :&#10;        \/ philosopherToForks[p] = {}&#10;        \/ philosopherToForks[p] = {p}&#10;        \/ philosopherToForks[p] = {p, NextFork(p)}"/>
+<listEntry value="1\A f \in Forks : Cardinality(PhilosophersHoldingFork(f)) &lt;= 1"/>
+<listEntry value="1\A f \in Forks : ForkIsAvailable(f) =&gt; PhilosophersHoldingFork(f) = {}"/>
+<listEntry value="1\A p \in Philosophers :&#10;        /\ philosopherStates[p] = &quot;thinking&quot; =&gt; philosopherToForks[p] = {}&#10;        /\ philosopherStates[p] = &quot;waitingForFirstFork&quot; =&gt; philosopherToForks[p] = {}&#10;        /\ philosopherStates[p] = &quot;waitingForSecondFork&quot; =&gt; Cardinality(philosopherToForks[p]) = 1&#10;        /\ philosopherStates[p] = &quot;eating&quot; =&gt; Cardinality(philosopherToForks[p]) = 2&#10;        /\ philosopherStates[p] = &quot;setDownFirstFork&quot; =&gt; Cardinality(philosopherToForks[p]) = 1"/>
+</listAttribute>
+<stringAttribute key="view" value=""/>
+<booleanAttribute key="visualizeStateGraph" value="false"/>
+</launchConfiguration>

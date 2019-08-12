@@ -4,9 +4,13 @@ EXTENDS FiniteSets, Integers
 
 CONSTANTS NumOfPhilosophers
 
-ASSUME NumOfPhilosophers \in Nat
+NumOfPhilosophersIsNaturalNumber == NumOfPhilosophers \in Nat
 
-ASSUME NumOfPhilosophers >= 2
+ASSUME NumOfPhilosophersIsNaturalNumber
+
+ThereIsMoreThanOnePhilosopher == NumOfPhilosophers >= 2
+
+ASSUME ThereIsMoreThanOnePhilosopher
 
 VARIABLES philosopherStates, philosopherToForks
 
@@ -45,12 +49,12 @@ Init ==
     /\ philosopherStates = [p \in Philosophers |-> "thinking"]
     /\ philosopherToForks = [f \in Philosophers |-> {}]
 
-WaitForFork == \E p \in Philosophers :
+WaitForFork(p) ==
     /\ philosopherStates[p] = "thinking"
     /\ philosopherStates' = [philosopherStates EXCEPT ![p] = "waitingForFirstFork"]
     /\ UNCHANGED philosopherToForks
         
-PickUpFirstFork == \E p \in Philosophers :
+PickUpFirstFork(p) ==
     /\ philosopherStates[p] = "waitingForFirstFork"
     /\
         \/ IF ForkIsAvailable(p) THEN
@@ -61,7 +65,7 @@ PickUpFirstFork == \E p \in Philosophers :
             FALSE
     /\ philosopherStates' = [philosopherStates EXCEPT ![p] = "waitingForSecondFork"]
         
-PickUpSecondFork == \E p \in Philosophers :
+PickUpSecondFork(p) ==
     /\ philosopherStates[p] = "waitingForSecondFork"
     /\
         \/ IF ForkIsAvailable(p) THEN
@@ -72,24 +76,26 @@ PickUpSecondFork == \E p \in Philosophers :
             FALSE
     /\ philosopherStates' = [philosopherStates EXCEPT ![p] = "eating"]
 
-SetDownFirstFork == \E p \in Philosophers :
+SetDownFirstFork(p) ==
     /\ philosopherStates[p] = "eating"
     /\ \E f \in philosopherToForks[p] : 
         philosopherToForks' = [philosopherToForks EXCEPT ![p] = philosopherToForks[p] \ {f}]
     /\ philosopherStates' = [philosopherStates EXCEPT ![p] = "setDownFirstFork"]
 
-SetDownSecondFork == \E p \in Philosophers :
+SetDownSecondFork(p) ==
     /\ philosopherStates[p] = "setDownFirstFork"
     /\ philosopherToForks' = [philosopherToForks EXCEPT ![p] = {}]
     /\ philosopherStates' = [philosopherStates EXCEPT ![p] = "thinking"]
     
-Next ==
-    \/ WaitForFork
-    \/ PickUpFirstFork
-    \/ PickUpSecondFork
-    \/ SetDownFirstFork
-    \/ SetDownSecondFork
+Next == \E p \in Philosophers :
+    \/ WaitForFork(p)
+    \/ PickUpFirstFork(p)
+    \/ PickUpSecondFork(p)
+    \/ SetDownFirstFork(p)
+    \/ SetDownSecondFork(p)
     
 Spec == Init /\ [][Next]_vars
+
+SpecWithFairness == Spec /\ WF_vars(Next)
 
 =============================================================================

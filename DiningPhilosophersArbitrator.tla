@@ -57,8 +57,8 @@ SpecWithFairness ==
     
 THEOREM Spec => DiningPhilosophers!Spec
 
-THEOREM SpecWithFairness => DiningPhilosophers!EventuallyAllPhilosophersEat
+THEOREM SpecWithFairness => DiningPhilosophers!AllPhilosophersEventuallyEat
 =============================================================================
 \* Modification History
-\* Last modified Mon Aug 12 19:50:30 EDT 2019 by changlin
+\* Last modified Tue Aug 13 16:56:13 EDT 2019 by changlin
 \* Created Mon Aug 12 18:29:48 EDT 2019 by changlin

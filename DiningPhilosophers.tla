@@ -20,7 +20,7 @@ Philosophers == 1..NumOfPhilosophers
 
 Forks == 1..NumOfPhilosophers
 
-NextFork(fork) == IF fork < NumOfPhilosophers THEN fork + 1 ELSE (fork + 1) % NumOfPhilosophers
+NextFork(fork) == IF fork < NumOfPhilosophers THEN fork + 1 ELSE ((fork + 1) % NumOfPhilosophers) + 1
 
 PhilosophersHoldingFork(fork) == { p \in Philosophers : fork \in philosopherToForks[p] }
 
@@ -57,23 +57,22 @@ WaitForFork(p) ==
 PickUpFirstFork(p) ==
     /\ philosopherStates[p] = "waitingForFirstFork"
     /\
-        \/ IF ForkIsAvailable(p) THEN
-            philosopherToForks' = [philosopherToForks EXCEPT ![p] = {p}] ELSE
-            FALSE
-        \/ IF ForkIsAvailable(NextFork(p)) THEN
-            philosopherToForks' = [philosopherToForks EXCEPT ![p] = {NextFork(p)}] ELSE
-            FALSE
+        \/
+            /\ ForkIsAvailable(p)
+            /\ philosopherToForks' = [philosopherToForks EXCEPT ![p] = {p}]
+        \/
+            /\ ForkIsAvailable(NextFork(p))
+            /\ philosopherToForks' = [philosopherToForks EXCEPT ![p] = {NextFork(p)}]
     /\ philosopherStates' = [philosopherStates EXCEPT ![p] = "waitingForSecondFork"]
         
 PickUpSecondFork(p) ==
     /\ philosopherStates[p] = "waitingForSecondFork"
     /\
-        \/ IF ForkIsAvailable(p) THEN
-            philosopherToForks' = [philosopherToForks EXCEPT ![p] = philosopherToForks[p] \union {p}] ELSE
-            FALSE
-        \/ IF ForkIsAvailable(NextFork(p)) THEN
-            philosopherToForks' = [philosopherToForks EXCEPT ![p] = philosopherToForks[p] \union {NextFork(p)}] ELSE
-            FALSE
+        \/
+            /\ ForkIsAvailable(p)
+            /\ philosopherToForks' = [philosopherToForks EXCEPT ![p] = philosopherToForks[p] \union {p}]
+        \/  /\ ForkIsAvailable(NextFork(p))
+            /\ philosopherToForks' = [philosopherToForks EXCEPT ![p] = philosopherToForks[p] \union {NextFork(p)}]
     /\ philosopherStates' = [philosopherStates EXCEPT ![p] = "eating"]
 
 SetDownFirstFork(p) ==
@@ -98,6 +97,6 @@ Spec == Init /\ [][Next]_vars
 
 SpecWithFairness == Spec /\ WF_vars(Next)
 
-EventuallyAllPhilosophersEat == \A p \in Philosophers : <> (philosopherStates[p] = "eating")
+AllPhilosophersEventuallyEat == \A p \in Philosophers : <> (philosopherStates[p] = "eating")
 
 =============================================================================

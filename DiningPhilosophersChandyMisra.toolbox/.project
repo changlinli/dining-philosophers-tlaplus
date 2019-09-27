@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>DiningPhilosophersChandyMisra</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>toolbox.builder.TLAParserBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>toolbox.natures.TLANature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>DiningPhilosophers.tla</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/DiningPhilosophers.tla</locationURI>
+		</link>
+		<link>
+			<name>DiningPhilosophersChandyMisra.tla</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/DiningPhilosophersChandyMisra.tla</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>

@@ -1,16 +1,8 @@
-------------------------- MODULE DiningPhilosophers -------------------------
+------------------- MODULE DiningPhilosophersTransactions -------------------
 
 EXTENDS FiniteSets, Integers
 
-CONSTANTS NumOfPhilosophers
-
-NumOfPhilosophersIsNaturalNumber == NumOfPhilosophers \in Nat
-
-ASSUME NumOfPhilosophersIsNaturalNumber
-
-ThereIsMoreThanOnePhilosopher == NumOfPhilosophers >= 2
-
-ASSUME ThereIsMoreThanOnePhilosopher
+CONSTANT NumOfPhilosophers
 
 VARIABLES philosopherStates, philosopherToForks
 
@@ -20,7 +12,7 @@ Philosophers == 1..NumOfPhilosophers
 
 Forks == 1..NumOfPhilosophers
 
-NextFork(fork) == IF fork < NumOfPhilosophers THEN fork + 1 ELSE ((fork + 1) % NumOfPhilosophers) + 1
+NextFork(fork) == IF fork < NumOfPhilosophers THEN fork + 1 ELSE (fork + 1) % NumOfPhilosophers
 
 PhilosophersHoldingFork(fork) == { p \in Philosophers : fork \in philosopherToForks[p] }
 
@@ -30,7 +22,7 @@ ForkIsAvailable(fork) == fork \notin UNION Range(philosopherToForks)
 
 TypeOK ==
     /\ Cardinality(Forks) = NumOfPhilosophers
-    /\ philosopherStates \in [Philosophers -> {"thinking", "waitingForFirstFork", "waitingForSecondFork", "eating", "setDownFirstFork"}]
+    /\ philosopherStates \in [Philosophers -> {"thinking", "waitingForFork", "eating"}]
     /\ \A p \in Philosophers :
         \/ philosopherToForks[p] = {}
         \/ philosopherToForks[p] = {p}
@@ -38,42 +30,43 @@ TypeOK ==
         \/ philosopherToForks[p] = {p, NextFork(p)}
     /\ \A f \in Forks : Cardinality(PhilosophersHoldingFork(f)) <= 1
     /\ \A f \in Forks : ForkIsAvailable(f) => PhilosophersHoldingFork(f) = {}
-    /\ \A f \in Forks : NextFork(f) \in Forks
     /\ \A p \in Philosophers :
         /\ philosopherStates[p] = "thinking" => philosopherToForks[p] = {}
-        /\ philosopherStates[p] = "waitingForFirstFork" => philosopherToForks[p] = {}
-        /\ philosopherStates[p] = "waitingForSecondFork" => Cardinality(philosopherToForks[p]) = 1
+        /\ philosopherStates[p] = "waitingForFork" => philosopherToForks[p] = {}
         /\ philosopherStates[p] = "eating" => Cardinality(philosopherToForks[p]) = 2
-        /\ philosopherStates[p] = "setDownFirstFork" => Cardinality(philosopherToForks[p]) = 1
-
+        
 Init ==
     /\ philosopherStates = [p \in Philosophers |-> "thinking"]
     /\ philosopherToForks = [f \in Philosophers |-> {}]
 
 WaitForFork(p) ==
     /\ philosopherStates[p] = "thinking"
-    /\ philosopherStates' = [philosopherStates EXCEPT ![p] = "waitingForFirstFork"]
+    /\ philosopherStates' = [philosopherStates EXCEPT ![p] = "waitingForFork"]
     /\ UNCHANGED philosopherToForks
+    
+PickupForks(p) ==
+    /\ philosopherStates[p] = ""
         
 PickUpFirstFork(p) ==
     /\ philosopherStates[p] = "waitingForFirstFork"
     /\
-        \/
-            /\ ForkIsAvailable(p)
-            /\ philosopherToForks' = [philosopherToForks EXCEPT ![p] = {p}]
-        \/
-            /\ ForkIsAvailable(NextFork(p))
-            /\ philosopherToForks' = [philosopherToForks EXCEPT ![p] = {NextFork(p)}]
+        \/ IF ForkIsAvailable(p) THEN
+            philosopherToForks' = [philosopherToForks EXCEPT ![p] = {p}] ELSE
+            FALSE
+        \/ IF ForkIsAvailable(NextFork(p)) THEN
+            philosopherToForks' = [philosopherToForks EXCEPT ![p] = {NextFork(p)}] ELSE
+            FALSE
     /\ philosopherStates' = [philosopherStates EXCEPT ![p] = "waitingForSecondFork"]
         
 PickUpSecondFork(p) ==
     /\ philosopherStates[p] = "waitingForSecondFork"
     /\
-        \/
-            /\ ForkIsAvailable(p)
-            /\ philosopherToForks' = [philosopherToForks EXCEPT ![p] = philosopherToForks[p] \union {p}]
-        \/  /\ ForkIsAvailable(NextFork(p))
-            /\ philosopherToForks' = [philosopherToForks EXCEPT ![p] = philosopherToForks[p] \union {NextFork(p)}]
+        \/ IF ForkIsAvailable(p) THEN
+            philosopherToForks' = [philosopherToForks EXCEPT ![p] = philosopherToForks[p] \union {p}] ELSE
+            FALSE
+        \/ IF ForkIsAvailable(NextFork(p)) THEN
+            philosopherToForks' = [philosopherToForks EXCEPT ![p] = philosopherToForks[p] \union {NextFork(p)}] ELSE
+            FALSE
     /\ philosopherStates' = [philosopherStates EXCEPT ![p] = "eating"]
 
 SetDownFirstFork(p) ==
@@ -93,11 +86,8 @@ Next == \E p \in Philosophers :
     \/ PickUpSecondFork(p)
     \/ SetDownFirstFork(p)
     \/ SetDownSecondFork(p)
-    
-Spec == Init /\ [][Next]_vars
-
-SpecWithFairness == Spec /\ WF_vars(Next)
-
-AllPhilosophersEventuallyEat == \A p \in Philosophers : <> (philosopherStates[p] = "eating")
 
 =============================================================================
+\* Modification History
+\* Last modified Tue Aug 13 15:24:31 EDT 2019 by changlin
+\* Created Tue Aug 13 14:37:49 EDT 2019 by changlin
